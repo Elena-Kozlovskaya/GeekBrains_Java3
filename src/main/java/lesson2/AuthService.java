@@ -18,4 +18,9 @@ public interface AuthService {
      * Получить никнейм
      */
     String getNickByLoginAndPass(String login, String pass);
+
+    /**
+     * Изменить никнейм
+     */
+    String changeNick(String nick, String newNick);
 }
