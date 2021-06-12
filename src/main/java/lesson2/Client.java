@@ -4,10 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+import java.util.List;
+
 
 
 public class Client extends JFrame {
@@ -20,6 +22,10 @@ public class Client extends JFrame {
 
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
+    private String strFromServer;
+    private File file;
+
+
 
     public Client() {
 
@@ -40,22 +46,33 @@ public class Client extends JFrame {
             try {
                 //авторизация
                 while (true) {
-                    String strFromServer = inputStream.readUTF();
+                    strFromServer = inputStream.readUTF();
+                    chatArea.append("\n");
                     if (strFromServer.equals(ChatConstants.AUTH_OK)) {
                         break;
                     }
-                    chatArea.append(strFromServer);
+                    String[] parts = strFromServer.split("\\s+");
+                    String fileName = parts[1];
+                    file = new File("history_"+fileName+".txt");
+                    chatArea.append("Сообщение с сервера: " + strFromServer);
                     chatArea.append("\n");
+
+                    chatArea.append("Последние 100 сообщений чата: " + "\n" + readFile());
+                    chatArea.append("\n");
+                    break;
                 }
+
+
                 //чтение
                 while (true) {
-                    String strFromServer = inputStream.readUTF();
+                    strFromServer = inputStream.readUTF();
                     if (strFromServer.equals(ChatConstants.STOP_WORD)) {
                         break;
                     } if(strFromServer.startsWith(ChatConstants.CLIENTS_LIST)) {
                         chatArea.append("Сейчас онлайн " + strFromServer);
                     } else {
                         chatArea.append(strFromServer);
+                        writeFile(strFromServer + "\n");
                     }
                     chatArea.append("\n");
                 }
@@ -140,7 +157,35 @@ public class Client extends JFrame {
         }
     }
 
+    private void writeFile(String strFromServer){
+        try(DataOutputStream bos = new DataOutputStream(new FileOutputStream(file, true))) {
+            bos.writeUTF(strFromServer);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 
+    private List<String> readFile() {
+        LinkedList<String> messagesList = new LinkedList<>();
+        LinkedList<String> lastHundredMessages = new LinkedList<>();
+        int count = 0;
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(
+                        new FileInputStream(file), StandardCharsets.UTF_8))) {
+            String message;
+            while ((message = reader.readLine()) != null) {
+                    messagesList.addLast(message);
+                }
+                while(count < 100) {
+                lastHundredMessages.addFirst(messagesList.getLast() + "\n");
+                messagesList.removeLast();
+                count++;
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        return lastHundredMessages;
+    }
 
 
     public static void main(String[] args) {
