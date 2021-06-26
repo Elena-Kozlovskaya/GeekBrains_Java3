@@ -1,5 +1,8 @@
 package lesson6;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -14,7 +17,7 @@ public class MyServer {
 
     private List<ClientHandler> clients;
     private AuthService authService;
-
+    private static final Logger LOGGER = LogManager.getLogger(MyServer.class);
 
 
 
@@ -26,9 +29,9 @@ public class MyServer {
             authService.start();
             clients = new ArrayList<>();
             while(true){
-                System.out.println("Сервер ожидает подключения");
+                LOGGER.info(ChatConstants.MS + "Сервер ожидает подключения");
                 Socket socket = server.accept();
-                System.out.println("Клиент подключился");
+                LOGGER.info(ChatConstants.MS + "Клиент подключился");
                 new ClientHandler(this, socket); // Создали нового клиета, добавили в список клиентов
             }
 

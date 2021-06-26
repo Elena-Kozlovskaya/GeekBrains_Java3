@@ -1,0 +1,28 @@
+INFO  2021-06-26 16:40:35 [main] lesson6.DatabaseSqlite (DatabaseSqlite.java:23) - Class DatabaseSqlite - БД подключена
+DEBUG 2021-06-26 16:40:35 [main] lesson6.DatabaseSqlite (DatabaseSqlite.java:68) - Class DatabaseSqlite - создали таблицу
+DEBUG 2021-06-26 16:40:35 [main] lesson6.DatabaseSqlite (DatabaseSqlite.java:99) - Class DatabaseSqlite - заполнили таблицу
+DEBUG 2021-06-26 16:40:35 [main] lesson6.DatabaseSqlite (DatabaseSqlite.java:26) - Class DatabaseSqlite - [User{nick='nick1', login='login1', pass='pass1'}, User{nick='nick2', login='login2', pass='pass2'}, User{nick='nick3', login='login3', pass='pass3'}]
+INFO  2021-06-26 16:40:35 [main] lesson6.MyServer (MyServer.java:32) - Class MyServer - Сервер ожидает подключения
+INFO  2021-06-26 16:43:20 [main] lesson6.MyServer (MyServer.java:34) - Class MyServer - Клиент подключился
+INFO  2021-06-26 16:43:20 [main] lesson6.MyServer (MyServer.java:32) - Class MyServer - Сервер ожидает подключения
+DEBUG 2021-06-26 16:43:21 [pool-2-thread-1] lesson6.ClientHandler (ClientHandler.java:47) - Class ClientHandler - сейчас начнется авторизация
+DEBUG 2021-06-26 16:43:21 [pool-2-thread-1] lesson6.ClientHandler (ClientHandler.java:143) - Class ClientHandler - Запущена авторизация метод authentification()
+DEBUG 2021-06-26 16:43:21 [pool-2-thread-2] lesson6.ClientHandler (ClientHandler.java:68) - Class ClientHandler - поток закрытия сейчас уснет
+DEBUG 2021-06-26 16:43:26 [pool-2-thread-2] lesson6.ClientHandler (ClientHandler.java:70) - Class ClientHandler - поток закрытия проснулся
+DEBUG 2021-06-26 16:43:26 [pool-2-thread-2] lesson6.ClientHandler (ClientHandler.java:68) - Class ClientHandler - поток закрытия сейчас уснет
+DEBUG 2021-06-26 16:43:31 [pool-2-thread-2] lesson6.ClientHandler (ClientHandler.java:70) - Class ClientHandler - поток закрытия проснулся
+DEBUG 2021-06-26 16:43:31 [pool-2-thread-2] lesson6.ClientHandler (ClientHandler.java:68) - Class ClientHandler - поток закрытия сейчас уснет
+DEBUG 2021-06-26 16:43:31 [pool-2-thread-1] lesson6.ClientHandler (ClientHandler.java:145) - Class ClientHandler - Открыт поток чтения authentification()
+DEBUG 2021-06-26 16:43:31 [pool-2-thread-1] lesson6.DatabaseSqlite (DatabaseSqlite.java:124) - Class DatabaseSqlite - nick1
+DEBUG 2021-06-26 16:43:31 [pool-2-thread-1] lesson6.ClientHandler (ClientHandler.java:158) - Class ClientHandler - 10 секунд ушло на авторизацию
+DEBUG 2021-06-26 16:43:31 [pool-2-thread-1] lesson6.ClientHandler (ClientHandler.java:49) - Class ClientHandler - авторизация прошла успешно
+DEBUG 2021-06-26 16:43:31 [pool-2-thread-1] lesson6.ClientHandler (ClientHandler.java:101) - Class ClientHandler - Запущено чтение метод readMessages()
+DEBUG 2021-06-26 16:43:36 [pool-2-thread-2] lesson6.ClientHandler (ClientHandler.java:70) - Class ClientHandler - поток закрытия проснулся
+DEBUG 2021-06-26 16:43:36 [pool-2-thread-2] lesson6.ClientHandler (ClientHandler.java:75) - Class ClientHandler - Поздравляем! Вы успели авторизоваться!
+INFO  2021-06-26 16:44:03 [pool-2-thread-1] lesson6.ClientHandler (ClientHandler.java:103) - Class ClientHandler - от nick1: привет!
+DEBUG 2021-06-26 16:44:03 [pool-2-thread-1] lesson6.ClientHandler (ClientHandler.java:132) - Class ClientHandler - запускаю метод server.broadcastMessage
+DEBUG 2021-06-26 16:44:03 [pool-2-thread-1] lesson6.ClientHandler (ClientHandler.java:101) - Class ClientHandler - Запущено чтение метод readMessages()
+INFO  2021-06-26 16:44:16 [pool-2-thread-1] lesson6.ClientHandler (ClientHandler.java:103) - Class ClientHandler - от nick1: /end
+DEBUG 2021-06-26 16:44:16 [pool-2-thread-1] lesson6.ClientHandler (ClientHandler.java:51) - Class ClientHandler - завершаю чтение 
+INFO  2021-06-26 16:44:16 [pool-2-thread-1] lesson6.ClientHandler (ClientHandler.java:55) - Class ClientHandler - закрываю соединение 
+INFO  2021-06-26 16:44:16 [pool-2-thread-1] lesson6.ClientHandler (ClientHandler.java:180) - Class ClientHandler - Закрываю соединение

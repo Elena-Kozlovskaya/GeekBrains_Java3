@@ -1,5 +1,8 @@
 package lesson6;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -21,6 +24,7 @@ public class ClientHandler {
     private DataInputStream inputStream;
     private DataOutputStream outputStream;
     private volatile boolean authorization;
+    private static final Logger LOGGER = LogManager.getLogger(ClientHandler.class);
 
     private String name;
 
@@ -40,15 +44,15 @@ public class ClientHandler {
             ExecutorService executorService = Executors.newFixedThreadPool(2);
             executorService.execute(() -> {
                 try {
-                    System.out.println("сейчас начнется авторизация");
+                    LOGGER.debug(ChatConstants.CH + "сейчас начнется авторизация");
                     authentification();
-                    System.out.println("авторизация прошла успешно");
+                    LOGGER.debug(ChatConstants.CH + "авторизация прошла успешно");
                     readMessages();
-                    System.out.println("завершаю чтение ");
+                    LOGGER.debug(ChatConstants.CH + "завершаю чтение ");
                 } catch (IOException | SQLException e){
                     e.printStackTrace();
                 } finally {
-                    System.out.println("закрываю соединение ");
+                    LOGGER.info(ChatConstants.CH + "закрываю соединение ");
                     closeConnection();
                     executorService.shutdown();
                 }
@@ -61,17 +65,17 @@ public class ClientHandler {
                     long timerFinish = 120000;
 
                     while (!authorization | timerFinish <= 0){
-                        System.out.println("поток закрытия сейчас уснет");
+                        LOGGER.debug(ChatConstants.CH + "поток закрытия сейчас уснет");
                         Thread.sleep(5000);
-                        System.out.println("поток закрытия проснулся");
+                        LOGGER.debug(ChatConstants.CH + "поток закрытия проснулся");
                         timerFinish = System.currentTimeMillis() - timerStart;
                         System.out.println(timerFinish);
                     }
                     if(authorization){
-                        System.out.println("Поздравляем! Вы успели авторизоваться!");
+                        LOGGER.debug(ChatConstants.CH + "Поздравляем! Вы успели авторизоваться!");
                     } else {
-                        System.out.println("Вы не успели авторизоваться!");
-                        System.out.println("Нафиг с пляжа!");
+                        LOGGER.debug(ChatConstants.CH + "Вы не успели авторизоваться!");
+                        LOGGER.debug(ChatConstants.CH + "Нафиг с пляжа!");
                         closeConnection();
                     }
                     /*System.out.println("поток закрытия сейчас уснет");
@@ -87,16 +91,16 @@ public class ClientHandler {
 
 
         } catch (IOException ex){
-            System.out.println("Проблема при создании клиента");
+            LOGGER.error(ChatConstants.CH + "Проблема при создании клиента");
         }
 
     }
 
     private void readMessages() throws IOException {
         while (true) {
-            System.out.println("Запущено чтение метод readMessages() ClientHandler");
+            LOGGER.debug(ChatConstants.CH + "Запущено чтение метод readMessages()");
             String messageFromClient = inputStream.readUTF();
-            System.out.println("от " + name + ": " + messageFromClient);
+            LOGGER.info(ChatConstants.CH + "от " + name + ": " + messageFromClient);
             if (messageFromClient.equals(ChatConstants.STOP_WORD)) {
                 return;
             } else if (messageFromClient.startsWith(ChatConstants.SEND_TO_NICK)) {
@@ -125,7 +129,7 @@ public class ClientHandler {
                     sendMsg("Ник уже используется");
                 }
             } else {
-                System.out.println("запускаю метод server.broadcastMessage");
+                LOGGER.debug(ChatConstants.CH + "запускаю метод server.broadcastMessage");
                 server.broadcastMessage("[" + name + "]: " + messageFromClient); // клиент пишет сообщение, отправляя его на сервер. Сервер отправляет сообщение другим клиентам через socket.
             }
         }
@@ -136,9 +140,9 @@ public class ClientHandler {
         while (true) {
             authorization = false;
             long start = System.currentTimeMillis();
-            System.out.println("Запущена авторизация метод authentification() ClientHandler");
+            LOGGER.debug(ChatConstants.CH + "Запущена авторизация метод authentification()");
             String message = inputStream.readUTF();
-            System.out.println("Открыт поток чтения authentification() ClientHandler");
+            LOGGER.debug(ChatConstants.CH + "Открыт поток чтения authentification()");
             if (message.startsWith(ChatConstants.AUTH_COMMAND)) {
                 String[] parts = message.split("\\s+"); // разбиваем строчку по пробелам длинной 3 (регулярное выражение)
                 String nick = server.getAuthService().getNickByLoginAndPass(parts[1], parts[2]);
@@ -151,7 +155,7 @@ public class ClientHandler {
                         server.broadcastMessage(name + " вошел в чат");
                         long finish = System.currentTimeMillis() - start;
                         authorization = true;
-                        System.out.println(finish / 1000 + " секунд ушло на авторизацию");
+                        LOGGER.debug(ChatConstants.CH + finish / 1000 + " секунд ушло на авторизацию");
                         return;
                     } else {
                         sendMsg("Ник уже используется");
@@ -173,6 +177,7 @@ public class ClientHandler {
     }
 
     public void closeConnection(){
+        LOGGER.info(ChatConstants.CH + "Закрываю соединение");
         server.unsubscribe(this);
         server.broadcastMessage(name + " вышел из чата");
         try {

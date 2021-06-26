@@ -1,5 +1,8 @@
 package lesson6;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +12,7 @@ public class DatabaseSqlite implements AuthService {
 
     static Connection connection;
     static Statement statement;
+    private static final Logger LOGGER = LogManager.getLogger(DatabaseSqlite.class);
 
     @Override
     public void start() {
@@ -16,14 +20,14 @@ public class DatabaseSqlite implements AuthService {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection(ChatConstants.DATABASE_URL);
             statement = connection.createStatement();
-            System.out.println("БД подключена");
+            LOGGER.info(ChatConstants.DB + "БД подключена");
             createTable();
             insert("nick", "login", "pass");
-            System.out.println(getTableInformation());
+            LOGGER.debug(ChatConstants.DB + getTableInformation());
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             dropTable();
-            System.out.println("удалили таблицу");
+            LOGGER.debug(ChatConstants.DB + "удалили таблицу");
         }
     }
 
@@ -61,7 +65,7 @@ public class DatabaseSqlite implements AuthService {
                 "        password  TEXT\n" +
                 "    );");
 
-        System.out.println("создали таблицу");
+        LOGGER.debug(ChatConstants.DB + "создали таблицу");
     }
 
 
@@ -92,7 +96,7 @@ public class DatabaseSqlite implements AuthService {
 
             }
         }
-        System.out.println("заполнили таблицу");
+        LOGGER.debug(ChatConstants.DB + "заполнили таблицу");
     }
 
     private void dropTable() {
@@ -117,7 +121,7 @@ public class DatabaseSqlite implements AuthService {
             preparedStatement.setString(2, pass);
             resultSet = preparedStatement.executeQuery();
             nickname = resultSet.getString("nickname");
-            System.out.println(nickname);
+            LOGGER.debug(ChatConstants.DB + nickname);
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -153,8 +157,8 @@ public class DatabaseSqlite implements AuthService {
                     count ++;
                 }
             }   if (count > 0) {
-                    System.out.println("Ник занят");
-                    System.out.println(getTableInformation());
+                    LOGGER.debug(ChatConstants.DB + "Ник занят");
+                    LOGGER.debug(ChatConstants.DB + getTableInformation());
                     return newNickname;
                 } else {
                     String sqlSet = "UPDATE Users SET nickname = ?  WHERE nickname = ? ";
@@ -162,7 +166,7 @@ public class DatabaseSqlite implements AuthService {
                     preparedStatement.setString(1, newNick);
                     preparedStatement.setString(2, nick);
                     preparedStatement.execute();
-                    System.out.println(getTableInformation());
+                    LOGGER.debug(ChatConstants.DB + getTableInformation());
                     String sqlSelectWhere = "SELECT nickname FROM Users WHERE nickname = ? ";
                     preparedStatement = connection.prepareStatement(sqlSelectWhere);
                     preparedStatement.setString(1, newNick);
@@ -171,7 +175,7 @@ public class DatabaseSqlite implements AuthService {
                     connection.commit();
                 }
         } catch (SQLException e) {
-            System.out.println("Что-то пошло не так... Попробуйте еще раз.");
+            LOGGER.error(ChatConstants.DB + "Что-то пошло не так... Попробуйте еще раз.");
             e.printStackTrace();
 
             try {

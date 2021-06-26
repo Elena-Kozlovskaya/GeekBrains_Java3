@@ -21,4 +21,11 @@ public class ChatConstants {
     public static final String CHANGE_NICK = "/chng";
 
     public static final String CHANGE_NICK_OK = "/nick changed";
+
+    public static final String CH = "Class ClientHandler - ";
+
+    public static final String DB = "Class DatabaseSqlite - ";
+
+    public static final String MS = "Class MyServer - ";
+
 }
